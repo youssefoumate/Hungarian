@@ -6,9 +6,9 @@
 #include "helpers.h"
 using namespace std;
 
-void solve(int (&Cost)[4][4], const int N, const int M, const int MODE, int *assignment_index){
+void solve(int (&Cost)[4][4], const int N, const int M, const int MODE, int *assignment_index, vector<tuple<int, int> > starred_zeros_coords){
   bool done;
-  std::cout<<"********Step1*************\n";
+  cout<<"********Step1*************\n";
   //step 1: minimum element in each row is subtracted from all the elements in that row
   for(int i=0; i<N; i++){
     int min_cost = INT_MAX;
@@ -22,9 +22,9 @@ void solve(int (&Cost)[4][4], const int N, const int M, const int MODE, int *ass
     }
 
   }
-  if (print_check_valid_assignment(Cost, N, M, assignment_index)) return;
+  if (print_and_check_valid_assignment(Cost, N, M, assignment_index, starred_zeros_coords)) return;
 
-  std::cout<<"********Step2*************\n";
+  cout<<"********Step2*************\n";
   //step2: minimum element in each column is subtracted from all the elements in that column
   for(int i=0; i<M; i++){
     int min_cost = INT_MAX;
@@ -37,8 +37,19 @@ void solve(int (&Cost)[4][4], const int N, const int M, const int MODE, int *ass
       Cost[j][i] = Cost[j][i] - min_cost;
     }
   }
-  if (print_check_valid_assignment(Cost, N, M, assignment_index)) return;
-  //TODO: add step 3~5
+  if (print_and_check_valid_assignment(Cost, N, M, assignment_index, starred_zeros_coords)) return;
+  //step3: Assignment of arbitary zeros, they can't be in the same row or column.
+  tuple<int, int> coord; 
+  for(int i=0; i<N; i++){
+    for (int j = 0; j < M; j++){
+      coord = tuple<int, int>(i,j);
+      if ((Cost[i][j] == 0) && (!inlist(coord, starred_zeros_coords))){
+        starred_zeros_coords.push_back(coord);
+      }
+    }
+  }
+
+  if (print_and_check_valid_assignment(Cost, N, M, assignment_index, starred_zeros_coords)) return;
 }
 
 int main() {
@@ -48,6 +59,7 @@ int main() {
   int M = 4;
 
   int *assignment_index;
+  vector<tuple<int, int> > starred_zeros_coords;
   assignment_index = new int[N];
   //initialize with -1
   for(int i = 0; i <N; i++)
@@ -58,11 +70,11 @@ int main() {
           2, 4, 6, 3,
           1, 10, 7, 2,
           };
-  std::cout<<"\n********Input*************\n";
-  print_matrix(Cost, N, M);
+  cout<<"\n********Input*************\n";
+  print_matrix(Cost, N, M, starred_zeros_coords);
   print_assignment(N, assignment_index);
   const int MODE = 0;
-  solve(Cost, N, M, MODE, assignment_index);
+  solve(Cost, N, M, MODE, assignment_index, starred_zeros_coords);
 
   return 0;
 }
