@@ -38,6 +38,7 @@ void solve(int (&Cost)[4][4], const int N, const int M, const int MODE, int *ass
     }
   }
   if (print_check_valid_assignment(Cost, N, M, assignment_index)) return;
+  //TODO: add step 3~5
 }
 
 int main() {
