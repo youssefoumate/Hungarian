@@ -38,6 +38,7 @@ void solve(int (&Cost)[4][4], const int N, const int M, const int MODE, int *ass
     }
   }
   if (print_and_check_valid_assignment(Cost, N, M, assignment_index, starred_zeros_coords)) return;
+  cout<<"********Step3*************\n";
   //step3: Assignment of arbitary zeros, they can't be in the same row or column.
   tuple<int, int> coord; 
   for(int i=0; i<N; i++){

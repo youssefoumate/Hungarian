@@ -27,7 +27,9 @@ void print_matrix(int (&Cost)[4][4], int N, int M, vector<tuple<int, int> > star
         if (inlist(coord, starred_zeros_coords)){
             cout<<Cost[i][j]<<"*"<<'\t';
         }
-        cout<<Cost[i][j]<<'\t';
+        else{
+            cout<<Cost[i][j]<<'\t';
+        }
     }
     cout<<'\n';
   }
