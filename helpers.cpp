@@ -10,7 +10,17 @@ bool check_valid_assignment(int* assignment_index, int N){
   }
   return done;
 }
-bool inlist(tuple<int, int> coord, vector<tuple<int, int> > starred_zeros_coords){
+
+bool inlist_row_or_col(tuple<int, int> coord, vector<tuple<int, int> > starred_zeros_coords){
+    for (tuple<int, int> el : starred_zeros_coords) {
+        if ((get<0>(coord) == get<0>(el)) || (get<1>(coord) == get<1>(el))){
+            return true;
+        }
+    }
+    return false;
+}
+
+bool inlist_row_and_col(tuple<int, int> coord, vector<tuple<int, int> > starred_zeros_coords){
     for (tuple<int, int> el : starred_zeros_coords) {
         if ((get<0>(coord) == get<0>(el)) && (get<1>(coord) == get<1>(el))){
             return true;
@@ -21,18 +31,18 @@ bool inlist(tuple<int, int> coord, vector<tuple<int, int> > starred_zeros_coords
 
 void print_matrix(int (&Cost)[4][4], int N, int M, vector<tuple<int, int> > starred_zeros_coords){
     tuple<int, int> coord; 
-  for( int i = 0; i < N; ++i){
-    for( int j = 0; j < M; ++j) {
-        coord = tuple<int, int>(i,j); 
-        if (inlist(coord, starred_zeros_coords)){
-            cout<<Cost[i][j]<<"*"<<'\t';
+    for( int i = 0; i < N; ++i){
+        for( int j = 0; j < M; ++j) {
+            coord = tuple<int, int>(i,j); 
+            if (inlist_row_and_col(coord, starred_zeros_coords)){
+                cout<<Cost[i][j]<<"*"<<'\t';
+            }
+            else{
+                cout<<Cost[i][j]<<'\t';
+            }
         }
-        else{
-            cout<<Cost[i][j]<<'\t';
-        }
+        cout<<'\n';
     }
-    cout<<'\n';
-  }
 }
 void print_assignment(int N, int* assignment_index){
   cout<<"********Assignment********\n";

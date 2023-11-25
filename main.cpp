@@ -44,12 +44,12 @@ void solve(int (&Cost)[4][4], const int N, const int M, const int MODE, int *ass
   for(int i=0; i<N; i++){
     for (int j = 0; j < M; j++){
       coord = tuple<int, int>(i,j);
-      if ((Cost[i][j] == 0) && (!inlist(coord, starred_zeros_coords))){
+      //cout << "coord : " << get<0>(coord) << "," << get<1>(coord) << endl;
+      if ((Cost[i][j] == 0) && (!inlist_row_or_col(coord, starred_zeros_coords))){
         starred_zeros_coords.push_back(coord);
       }
     }
   }
-
   if (print_and_check_valid_assignment(Cost, N, M, assignment_index, starred_zeros_coords)) return;
 }
 
