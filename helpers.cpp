@@ -29,7 +29,7 @@ bool inlist_row_and_col(tuple<int, int> coord, vector<tuple<int, int> > starred_
     return false;
 }
 
-void print_matrix(int (&Cost)[4][4], int N, int M, vector<tuple<int, int> > starred_zeros_coords, vector<int> marked_columns, vector<tuple<int, int> > primed_zeros_coords){
+void print_matrix(int (&Cost)[4][4], int N, int M, vector<tuple<int, int> > starred_zeros_coords, vector<int> marked_columns, vector<tuple<int, int> > primed_zeros_coords, vector<int> marked_rows){
     tuple<int, int> coord;
     bool marked;
     for( int j = 0; j < M; ++j) {
@@ -48,6 +48,7 @@ void print_matrix(int (&Cost)[4][4], int N, int M, vector<tuple<int, int> > star
     }
     cout<<'\n';
     for( int i = 0; i < N; ++i){
+        bool is_row_marked = false;
         for( int j = 0; j < M; ++j) {
             coord = tuple<int, int>(i,j); 
             if (inlist_row_and_col(coord, starred_zeros_coords)){
@@ -59,6 +60,14 @@ void print_matrix(int (&Cost)[4][4], int N, int M, vector<tuple<int, int> > star
             else{
                 cout<<Cost[i][j]<<'\t';
             }
+        }
+        for (int el : marked_rows) {
+			if(i==el){
+				is_row_marked = true;
+            }
+        }
+        if (is_row_marked){
+            cout<<"x";
         }
         cout<<'\n';
     }
@@ -85,9 +94,9 @@ void assign_tasks(int (&Cost)[4][4], int N, int M, int* assignment_index){
     }
   }
 }
-bool print_and_check_valid_assignment(int (&Cost)[4][4], int N, int M, int* assignment_index, vector<tuple<int, int> > starred_zeros_coords, vector<int> marked_columns, vector<tuple<int, int> > primed_zeros_coords){
+bool print_and_check_valid_assignment(int (&Cost)[4][4], int N, int M, int* assignment_index, vector<tuple<int, int> > starred_zeros_coords, vector<int> marked_columns, vector<tuple<int, int> > primed_zeros_coords, vector<int> marked_rows){
   assign_tasks(Cost, N, M, assignment_index);
-  print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords);
+  print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows);
   print_assignment(N, assignment_index);
   return check_valid_assignment(assignment_index, N);
 }
