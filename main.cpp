@@ -6,7 +6,7 @@
 #include "helpers.h"
 using namespace std;
 
-void solve(int (&Cost)[4][4], const int N, const int M, const int MODE, int *assignment_index, vector<tuple<int, int> > starred_zeros_coords, vector<int> marked_columns, vector<tuple<int, int> > primed_zeros_coords, vector<int> marked_rows){
+void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, vector<tuple<int, int> > starred_zeros_coords, vector<int> marked_columns, vector<tuple<int, int> > primed_zeros_coords, vector<int> marked_rows){
 	bool done;
 	cout<<"********Step1*************\n";
 	//step 1: minimum element in each row is subtracted from all the elements in that row
@@ -38,6 +38,7 @@ void solve(int (&Cost)[4][4], const int N, const int M, const int MODE, int *ass
 		}
 	}
 	if (print_and_check_valid_assignment(Cost, N, M, assignment_index, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows)) return;
+
 	cout<<"********Step3*************\n";
 	//step3: Assignment of arbitary zeros, they can't be in the same row or column.
 	tuple<int, int> coord; 
@@ -50,18 +51,20 @@ void solve(int (&Cost)[4][4], const int N, const int M, const int MODE, int *ass
 		}
 	}
 	if (print_and_check_valid_assignment(Cost, N, M, assignment_index, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows)) return;
+
 	cout<<"********Step4-1*************\n";
 	//Cover all columns containing a (starred) zero.
 	for (tuple<int, int> el : starred_zeros_coords) {
 		marked_columns.push_back(get<1>(el));
 	}
 	print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows);
+
 	cout<<"********Step4-2*************\n";
 	//TODO: Find a non-covered zero and prime it. (If all zeroes are covered, skip to step 5.)
 	bool marked_zero;
 	for(int i=0; i<N; i++){
 		for (int j = 0; j < M; j++){
-		marked_zero = false;
+			marked_zero = false;
 			for (int el : marked_columns){
 				if (el == j){
 					marked_zero = true;
@@ -82,7 +85,7 @@ void solve(int (&Cost)[4][4], const int N, const int M, const int MODE, int *ass
 				if (starred_zero_exit){
 					marked_rows.push_back(i);
 				}
-			}
+			}// TODO: implement else
 		}
 	}
 	print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows);
@@ -90,30 +93,28 @@ void solve(int (&Cost)[4][4], const int N, const int M, const int MODE, int *ass
 
 int main() {
 
-  srand(time(0));
-  int N = 4;
-  int M = 4;
+	int N = 4;
+	int M = 4;
 
-  int *assignment_index;
-  vector<tuple<int, int> > starred_zeros_coords;
-  vector<tuple<int, int> > primed_zeros_coords;
-  vector<int> marked_columns;
-  vector<int> marked_rows;
-  assignment_index = new int[N];
-  //initialize with -1
-  for(int i = 0; i <N; i++)
-      assignment_index[i] = -1;
-  int Cost[4][4] = {
-          3, 7, 3, 11,
-          8, 5, 6, 5,
-          2, 4, 6, 3,
-          1, 10, 7, 2,
-          };
-  cout<<"\n********Input*************\n";
-  print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows);
-  print_assignment(N, assignment_index);
-  const int MODE = 0;
-  solve(Cost, N, M, MODE, assignment_index, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows);
+	int *assignment_index;
+	vector<tuple<int, int> > starred_zeros_coords;
+	vector<tuple<int, int> > primed_zeros_coords;
+	vector<int> marked_columns;
+	vector<int> marked_rows;
+	assignment_index = new int[N];
+	//initialize with -1
+	for(int i = 0; i <N; i++)
+		assignment_index[i] = -1;
+	int Cost[4][4] = {
+			3, 7, 3, 11,
+			8, 5, 6, 5,
+			2, 4, 6, 3,
+			1, 10, 7, 2,
+			};
+	cout<<"\n********Input*************\n";
+	print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows);
+	print_assignment(N, assignment_index);
+	solve(Cost, N, M, assignment_index, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows);
 
-  return 0;
+	return 0;
 }
