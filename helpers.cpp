@@ -29,7 +29,7 @@ bool inlist_row_and_col(tuple<int, int> coord, vector<tuple<int, int> > starred_
     return false;
 }
 
-void print_matrix(int (&Cost)[4][4], int N, int M, vector<tuple<int, int> > starred_zeros_coords, vector<int> marked_columns){
+void print_matrix(int (&Cost)[4][4], int N, int M, vector<tuple<int, int> > starred_zeros_coords, vector<int> marked_columns, vector<tuple<int, int> > primed_zeros_coords){
     tuple<int, int> coord;
     bool marked;
     for( int j = 0; j < M; ++j) {
@@ -52,6 +52,9 @@ void print_matrix(int (&Cost)[4][4], int N, int M, vector<tuple<int, int> > star
             coord = tuple<int, int>(i,j); 
             if (inlist_row_and_col(coord, starred_zeros_coords)){
                 cout<<Cost[i][j]<<"*"<<'\t';
+            }
+            else if(inlist_row_and_col(coord, primed_zeros_coords)){
+                cout<<Cost[i][j]<<"'"<<'\t';
             }
             else{
                 cout<<Cost[i][j]<<'\t';
@@ -82,9 +85,9 @@ void assign_tasks(int (&Cost)[4][4], int N, int M, int* assignment_index){
     }
   }
 }
-bool print_and_check_valid_assignment(int (&Cost)[4][4], int N, int M, int* assignment_index, vector<tuple<int, int> > starred_zeros_coords, vector<int> marked_columns){
+bool print_and_check_valid_assignment(int (&Cost)[4][4], int N, int M, int* assignment_index, vector<tuple<int, int> > starred_zeros_coords, vector<int> marked_columns, vector<tuple<int, int> > primed_zeros_coords){
   assign_tasks(Cost, N, M, assignment_index);
-  print_matrix(Cost, N, M, starred_zeros_coords, marked_columns);
+  print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords);
   print_assignment(N, assignment_index);
   return check_valid_assignment(assignment_index, N);
 }
