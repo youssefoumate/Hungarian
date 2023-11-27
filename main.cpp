@@ -6,7 +6,7 @@
 #include "helpers.h"
 using namespace std;
 
-void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, vector<tuple<int, int> > starred_zeros_coords, vector<int> marked_columns, vector<tuple<int, int> > primed_zeros_coords, vector<int> marked_rows){
+void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, vector<tuple<int, int> > starred_zeros_coords, vector<int> marked_columns, vector<tuple<int, int> > primed_zeros_coords, vector<int> marked_rows, vector<tuple<int, int> > path){
 	bool done;
 	cout<<"********Step1*************\n";
 	//step 1: minimum element in each row is subtracted from all the elements in that row
@@ -60,7 +60,7 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 	print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows);
 
 	cout<<"********Step4-2*************\n";
-	//TODO: Find a non-covered zero and prime it. (If all zeroes are covered, skip to step 5.)
+	//Find a non-covered zero and prime it. (If all zeroes are covered, skip to step 5.)
 	bool marked_zero;
 	for(int i=0; i<N; i++){
 		for (int j = 0; j < M; j++){
@@ -74,18 +74,53 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 				primed_zeros_coords.push_back(tuple<int, int>(i,j));
 				//If the zero is on the same row as a starred zero, cover the corresponding row, 
 				// and uncover the column of the starred zero.
-				bool starred_zero_exit = false;
+				bool starred_zero_exist = false;
 				for (tuple<int, int> el : starred_zeros_coords) {
 					if(i==get<0>(el)){
 						//remove marked column of the starred zero
 						marked_columns.erase(remove(marked_columns.begin(), marked_columns.end(), get<1>(el)), marked_columns.end());
-						starred_zero_exit = true;
+						starred_zero_exist = true;
 					}
 				}
-				if (starred_zero_exit){
+				if (starred_zero_exist){
 					marked_rows.push_back(i);
 				}
-			}// TODO: implement else
+				/*else if (!starred_zero_exist){
+					//the non-covered zero has no assigned zero on its row.
+					int nm_zero_i = i;
+					int nm_zero_j = j;
+					tuple<int, int> non_covered_zero = tuple<int, int>(nm_zero_i,nm_zero_j);
+					path.push_back(non_covered_zero);
+					while(true){
+						//Find a starred zero on the corresponding column
+						bool starred_zero_exist = false;
+						int starred_zero_i;
+						int starred_zero_j;
+						for (tuple<int, int> starred_zero : starred_zeros_coords) {
+							if(nm_zero_j==get<1>(starred_zero)){
+								starred_zero_exist = true;
+								starred_zero_i = get<0>(starred_zero);
+								starred_zero_j = get<1>(starred_zero);
+								path.push_back(tuple<int, int>(starred_zero_i, starred_zero_j));
+							}
+						}
+						if (starred_zero_exist){
+							//Find a primed zero on the corresponding row (there should always be one).
+							for (tuple<int, int> primed_zero : primed_zeros_coords) {
+								if(starred_zero_i==get<0>(primed_zero)){
+									starred_zero_exist = true;
+									path.push_back(tuple<int, int>(get<0>(primed_zero), get<1>(primed_zero)));
+									starred_zero_i = get<0>(primed_zero);
+									starred_zero_j = get<1>(primed_zero);
+								}
+							}
+						}
+						else{
+							break;
+						}
+					}	
+				}*/
+			}
 		}
 	}
 	print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows);
@@ -101,6 +136,7 @@ int main() {
 	vector<tuple<int, int> > primed_zeros_coords;
 	vector<int> marked_columns;
 	vector<int> marked_rows;
+	vector<tuple<int, int> > path;
 	assignment_index = new int[N];
 	//initialize with -1
 	for(int i = 0; i <N; i++)
@@ -114,7 +150,7 @@ int main() {
 	cout<<"\n********Input*************\n";
 	print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows);
 	print_assignment(N, assignment_index);
-	solve(Cost, N, M, assignment_index, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows);
+	solve(Cost, N, M, assignment_index, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
 
 	return 0;
 }
