@@ -21,8 +21,8 @@ bool inlist_row_or_col(tuple<int, int> coord, vector<tuple<int, int> > starred_z
     return false;
 }
 
-bool inlist_row_and_col(tuple<int, int> coord, vector<tuple<int, int> > starred_zeros_coords){
-    for (tuple<int, int> el : starred_zeros_coords) {
+bool inlist_row_and_col(tuple<int, int> coord, vector<tuple<int, int> > list){
+    for (tuple<int, int> el : list) {
         if ((get<0>(coord) == get<0>(el)) && (get<1>(coord) == get<1>(el))){
             return true;
         }
@@ -51,16 +51,18 @@ void print_matrix(int (&Cost)[4][4], int N, int M, vector<tuple<int, int> > star
     for( int i = 0; i < N; ++i){
         bool is_row_marked = false;
         for( int j = 0; j < M; ++j) {
-            coord = tuple<int, int>(i,j); 
+            coord = tuple<int, int>(i,j);
+            cout<<Cost[i][j];
             if (inlist_row_and_col(coord, starred_zeros_coords)){
-                cout<<Cost[i][j]<<"*"<<'\t';
+                cout<<"p";
+            }
+            if (inlist_row_and_col(coord, starred_zeros_coords)){
+                cout<<"*";
             }
             else if(inlist_row_and_col(coord, primed_zeros_coords)){
-                cout<<Cost[i][j]<<"'"<<'\t';
+                cout<<"'";
             }
-            else{
-                cout<<Cost[i][j]<<'\t';
-            }
+            cout<<'\t';
         }
         for (int el : marked_rows) {
 			if(i==el){
