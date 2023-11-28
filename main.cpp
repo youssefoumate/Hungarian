@@ -22,7 +22,7 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 		}
 
 	}
-	if (print_and_check_valid_assignment(Cost, N, M, assignment_index, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows)) return;
+	if (print_and_check_valid_assignment(Cost, N, M, assignment_index, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path)) return;
 
 	cout<<"********Step2*************\n";
 	//step2: minimum element in each column is subtracted from all the elements in that column
@@ -37,7 +37,7 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 		Cost[j][i] = Cost[j][i] - min_cost;
 		}
 	}
-	if (print_and_check_valid_assignment(Cost, N, M, assignment_index, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows)) return;
+	if (print_and_check_valid_assignment(Cost, N, M, assignment_index, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path)) return;
 
 	cout<<"********Step3*************\n";
 	//step3: Assignment of arbitary zeros, they can't be in the same row or column.
@@ -50,7 +50,7 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 		}
 		}
 	}
-	if (print_and_check_valid_assignment(Cost, N, M, assignment_index, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows)) return;
+	if (print_and_check_valid_assignment(Cost, N, M, assignment_index, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path)) return;
 
 	cout<<"********Step4-1*************\n";
 	//Cover all columns containing a (starred) zero.
