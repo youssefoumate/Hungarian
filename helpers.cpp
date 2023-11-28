@@ -53,7 +53,7 @@ void print_matrix(int (&Cost)[4][4], int N, int M, vector<tuple<int, int> > star
         for( int j = 0; j < M; ++j) {
             coord = tuple<int, int>(i,j);
             cout<<Cost[i][j];
-            if (inlist_row_and_col(coord, starred_zeros_coords)){
+            if (inlist_row_and_col(coord, path)){
                 cout<<"p";
             }
             if (inlist_row_and_col(coord, starred_zeros_coords)){
