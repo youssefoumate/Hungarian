@@ -70,6 +70,11 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 					marked_zero = true;
 				}
 			}
+			for (int el : marked_rows){
+				if (el == i){
+					marked_zero = true;
+				}
+			}
 			if ((Cost[i][j] == 0) && (!marked_zero)){
 				primed_zeros_coords.push_back(tuple<int, int>(i,j));
 				//If the zero is on the same row as a starred zero, cover the corresponding row, 
@@ -85,7 +90,7 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 				if (starred_zero_exist){
 					marked_rows.push_back(i);
 				}
-				else if (!starred_zero_exist){
+				else{
 					//the non-covered zero has no assigned zero on its row.
 					int nm_zero_i = i;
 					int nm_zero_j = j;
@@ -117,7 +122,25 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 						else{
 							break;
 						}
-					}	
+					}//TODO: For all zeros encountered during the path, star primed zeros and unstar starred zeros.
+					/*tuple<int, int> starred_zero_coords;
+					tuple<int, int> primed_zero_coords;
+					for (tuple<int, int> el: path){
+						for (int index = 0; index < starred_zeros_coords.size(); ++index){
+							starred_zero_coords = starred_zeros_coords[index];
+							if (get<0>(el) == get<0>(starred_zero_coords) && get<1>(el) == get<1>(starred_zero_coords)){
+								starred_zeros_coords[index] = tuple<int, int> (-1,-1);
+							}
+						}
+					}
+					for (tuple<int, int> el: path){
+						for (int index = 0; index < primed_zeros_coords.size(); ++index){
+							primed_zero_coords = primed_zeros_coords[index];
+							if (get<0>(el) == get<0>(primed_zero_coords) && get<1>(el) == get<1>(primed_zero_coords)){
+								starred_zeros_coords.push_back(primed_zero_coords);
+							}
+						}
+					}*/	
 				}
 			}
 		}
