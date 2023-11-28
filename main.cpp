@@ -85,17 +85,17 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 				if (starred_zero_exist){
 					marked_rows.push_back(i);
 				}
-				/*else if (!starred_zero_exist){
+				else if (!starred_zero_exist){
 					//the non-covered zero has no assigned zero on its row.
 					int nm_zero_i = i;
 					int nm_zero_j = j;
 					tuple<int, int> non_covered_zero = tuple<int, int>(nm_zero_i,nm_zero_j);
 					path.push_back(non_covered_zero);
+					int starred_zero_i;
+					int starred_zero_j;
 					while(true){
 						//Find a starred zero on the corresponding column
 						bool starred_zero_exist = false;
-						int starred_zero_i;
-						int starred_zero_j;
 						for (tuple<int, int> starred_zero : starred_zeros_coords) {
 							if(nm_zero_j==get<1>(starred_zero)){
 								starred_zero_exist = true;
@@ -110,8 +110,7 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 								if(starred_zero_i==get<0>(primed_zero)){
 									starred_zero_exist = true;
 									path.push_back(tuple<int, int>(get<0>(primed_zero), get<1>(primed_zero)));
-									starred_zero_i = get<0>(primed_zero);
-									starred_zero_j = get<1>(primed_zero);
+									nm_zero_j = get<1>(primed_zero);
 								}
 							}
 						}
@@ -119,7 +118,7 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 							break;
 						}
 					}	
-				}*/
+				}
 			}
 		}
 	}

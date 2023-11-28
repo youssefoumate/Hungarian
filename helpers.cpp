@@ -1,4 +1,5 @@
 #include<iostream>
+#include<vector>
 using namespace std;
 
 bool check_valid_assignment(int* assignment_index, int N){
