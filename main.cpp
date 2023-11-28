@@ -57,7 +57,7 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 	for (tuple<int, int> el : starred_zeros_coords) {
 		marked_columns.push_back(get<1>(el));
 	}
-	print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows);
+	print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
 
 	cout<<"********Step4-2*************\n";
 	//Find a non-covered zero and prime it. (If all zeroes are covered, skip to step 5.)
@@ -122,7 +122,7 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 			}
 		}
 	}
-	print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows);
+	print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
 }
 
 int main() {
@@ -147,7 +147,7 @@ int main() {
 			1, 10, 7, 2,
 			};
 	cout<<"\n********Input*************\n";
-	print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows);
+	print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
 	print_assignment(N, assignment_index);
 	solve(Cost, N, M, assignment_index, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
 
