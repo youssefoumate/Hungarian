@@ -78,27 +78,27 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 		}
 	}
 	if (print_and_check_valid_assignment(Cost, N, M, assignment_index, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path)) return;
-
-	cout<<"********Step4-1*************\n";
-	//Cover all columns containing a (starred) zero.
-	for (tuple<int, int> el : starred_zeros_coords) {
-		marked_columns.push_back(get<1>(el));
-	}
-	print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
-
-	cout<<"********Step4-2*************\n";
-	//Find a non-covered zero and prime it. (If all zeroes are covered, skip to step 5.)
 	tuple<int, int> marked_zero_coords;
 	int marked_zero_i;
 	int marked_zero_j;
 	int counter = 0;
 	while(true){
-		cout << "start" << endl;
 		counter++;
+		if (counter > 3){
+			return;
+		}
+		cout<<"********Step4-1*************\n";
+		//Cover all columns containing a (starred) zero.
+		for (tuple<int, int> el : starred_zeros_coords) {
+			marked_columns.push_back(get<1>(el));
+		}
+		cout<<"********Step4-2*************\n";
+		//Find a non-covered zero and prime it. (If all zeroes are covered, skip to step 5.)
+		cout << "start" << endl;
+		jump:
 		marked_zero_coords = find_non_marked_zero(Cost, N, M, marked_columns, marked_rows);
 		marked_zero_i = get<0>(marked_zero_coords);
 		marked_zero_j = get<1>(marked_zero_coords);
-		print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);	
 		if ((marked_zero_i != -1) && (marked_zero_j != -1)){
 			cout << "if" << endl;
 			primed_zeros_coords.push_back(tuple<int, int>(marked_zero_i, marked_zero_j));
@@ -115,7 +115,8 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 			}
 			if (starred_zero_exist){
 				marked_rows.push_back(marked_zero_i);
-				continue;
+				print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);	
+				goto jump;
 			}
 			else{
 				cout << "else" << endl;
@@ -173,6 +174,7 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 				primed_zeros_coords.clear();
 				marked_rows.clear();
 				marked_columns.clear();
+				print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);	
 			}
 		}
 	}
