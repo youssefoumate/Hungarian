@@ -75,6 +75,7 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 					marked_zero = true;
 				}
 			}
+			
 			if ((Cost[i][j] == 0) && (!marked_zero)){
 				primed_zeros_coords.push_back(tuple<int, int>(i,j));
 				//If the zero is on the same row as a starred zero, cover the corresponding row, 
@@ -122,8 +123,9 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 						else{
 							break;
 						}
-					}//TODO: For all zeros encountered during the path, star primed zeros and unstar starred zeros.
-					/*tuple<int, int> starred_zero_coords;
+					}
+					//TODO: For all zeros encountered during the path, star primed zeros and unstar starred zeros.
+					tuple<int, int> starred_zero_coords;
 					tuple<int, int> primed_zero_coords;
 					for (tuple<int, int> el: path){
 						for (int index = 0; index < starred_zeros_coords.size(); ++index){
@@ -140,7 +142,16 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 								starred_zeros_coords.push_back(primed_zero_coords);
 							}
 						}
-					}*/	
+					}
+					print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
+					primed_zeros_coords.clear();
+					marked_rows.clear();
+					marked_columns.clear();
+					return;
+					/*for (tuple<int, int> el : starred_zeros_coords){
+						cout << get<0>(el) << "," <<get<1>(el) <<endl;
+					}
+					cout << "****" << endl;*/
 				}
 			}
 		}
