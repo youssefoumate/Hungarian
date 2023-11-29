@@ -31,6 +31,7 @@ bool inlist_row_and_col(tuple<int, int> coord, vector<tuple<int, int> > list){
 }
 
 void print_matrix(int (&Cost)[4][4], int N, int M, vector<tuple<int, int> > starred_zeros_coords, vector<int> marked_columns, vector<tuple<int, int> > primed_zeros_coords, vector<int> marked_rows, vector<tuple<int, int> > path){
+    cout<<"********Cost********\n";
     tuple<int, int> coord;
     bool marked;
     for( int j = 0; j < M; ++j) {
@@ -74,6 +75,7 @@ void print_matrix(int (&Cost)[4][4], int N, int M, vector<tuple<int, int> > star
         }
         cout<<'\n';
     }
+    cout<<"*******************\n";
 }
 void print_assignment(int N, int* assignment_index){
   cout<<"********Assignment********\n";
