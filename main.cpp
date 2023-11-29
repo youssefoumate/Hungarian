@@ -151,7 +151,7 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 						break;
 					}
 				}
-				//TODO: For all zeros encountered during the path, star primed zeros and unstar starred zeros.
+				//For all zeros encountered during the path, star primed zeros and unstar starred zeros.
 				tuple<int, int> starred_zero_coords;
 				tuple<int, int> primed_zero_coords;
 				for (tuple<int, int> el: path){
@@ -170,14 +170,9 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 						}
 					}
 				}
-				//print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
 				primed_zeros_coords.clear();
 				marked_rows.clear();
 				marked_columns.clear();
-				/*for (tuple<int, int> el : starred_zeros_coords){
-					cout << get<0>(el) << "," <<get<1>(el) <<endl;
-				}
-				cout << "****" << endl;*/
 			}
 		}
 	}
