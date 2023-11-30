@@ -139,10 +139,6 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 	int marked_zero_j;
 	int counter = 0;
 	while(true){
-		counter++;
-		if (counter > 3){
-			return;
-		}
 		cout<<"********Step4*************\n";
 		//Cover all columns containing a (starred) zero.
 		for (tuple<int, int> el : starred_zeros_coords) {
