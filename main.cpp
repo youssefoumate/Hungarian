@@ -6,6 +6,61 @@
 #include "helpers.h"
 using namespace std;
 
+void unmarked_sub_min_marked_add_min(int (&Cost)[4][4], int N, int M, vector<int> marked_columns, vector<int> marked_rows, int min){
+	bool col_marked_zero;
+	bool row_marked_zero;
+	for(int i=0; i<N; i++){
+		for (int j = 0; j < M; j++){
+			col_marked_zero = false;
+			row_marked_zero = false;
+			for (int el : marked_columns){
+				if (el == j){
+					col_marked_zero = true;
+				}
+			}
+			for (int el : marked_rows){
+				if (el == i){
+					row_marked_zero = true;
+				}
+			}
+			if ((!col_marked_zero) && (!row_marked_zero)){
+				Cost[i][j] -= min;
+			}
+			else if ((col_marked_zero) && (row_marked_zero)){
+				Cost[i][j] += min;
+			}
+		}
+	}
+}
+
+int find_min_uncoverd_value(int (&Cost)[4][4], int N, int M, vector<int> marked_columns, vector<int> marked_rows){
+	bool col_marked_zero;
+	bool row_marked_zero;
+	int min = INT_MAX;
+	for(int i=0; i<N; i++){
+		for (int j = 0; j < M; j++){
+			col_marked_zero = false;
+			row_marked_zero = false;
+			for (int el : marked_columns){
+				if (el == j){
+					col_marked_zero = true;
+				}
+			}
+			for (int el : marked_rows){
+				if (el == i){
+					row_marked_zero = true;
+				}
+			}
+			if ((!col_marked_zero) && (!row_marked_zero)){
+				if (Cost[i][j] < min){
+					min = Cost[i][j];
+				}
+			}
+		}
+	}
+	return min;
+}
+
 tuple<int, int> find_non_marked_zero(int (&Cost)[4][4], int N, int M, vector<int> marked_columns, vector<int> marked_rows){
 	bool col_marked_zero;
 	bool row_marked_zero;
@@ -35,6 +90,7 @@ tuple<int, int> find_non_marked_zero(int (&Cost)[4][4], int N, int M, vector<int
 
 void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, vector<tuple<int, int> > starred_zeros_coords, vector<int> marked_columns, vector<tuple<int, int> > primed_zeros_coords, vector<int> marked_rows, vector<tuple<int, int> > path){
 	bool done;
+	int min_uncoverd;
 	cout<<"********Step1*************\n";
 	//step 1: minimum element in each row is subtracted from all the elements in that row
 	for(int i=0; i<N; i++){
@@ -90,7 +146,9 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 		cout<<"********Step4*************\n";
 		//Cover all columns containing a (starred) zero.
 		for (tuple<int, int> el : starred_zeros_coords) {
-			marked_columns.push_back(get<1>(el));
+			if (get<1>(el) != -1){
+				marked_columns.push_back(get<1>(el));
+			}
 		}
 		//Find a non-covered zero and prime it. (If all zeroes are covered, skip to step 5.)
 		cout << "start" << endl;
@@ -112,6 +170,7 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 					break;
 				}
 			}
+			print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
 			if (starred_zero_exist){
 				marked_rows.push_back(marked_zero_i);
 				print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);	
@@ -151,6 +210,7 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 						break;
 					}
 				}
+				print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
 				//For all zeros encountered during the path, star primed zeros and unstar starred zeros.
 				tuple<int, int> starred_zero_coords;
 				tuple<int, int> primed_zero_coords;
@@ -170,13 +230,22 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 						}
 					}
 				}
+				print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
 				primed_zeros_coords.clear();
 				marked_rows.clear();
-				marked_columns.clear();
-				print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);	
+				marked_columns.clear();	
 			}
 		}
-	}//TODO:implement step5
+		cout<<"********Step5*************\n";
+		//Find the lowest uncovered value.
+		min_uncoverd = find_min_uncoverd_value(Cost, N, M, marked_columns, marked_rows);
+		//Subtract this from every unmarked element and add it to every element covered by two lines.
+		unmarked_sub_min_marked_add_min(Cost, N, M, marked_columns, marked_rows, min_uncoverd);
+		print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
+		if ((marked_columns.size() + marked_rows.size()) == min(N,M)){
+			break;
+		}
+	}
 }
 
 int main() {
@@ -198,7 +267,7 @@ int main() {
 			3, 7, 3, 11,
 			8, 5, 6, 5,
 			2, 4, 6, 3,
-			1, 10, 7, 2,
+			1, 10, 7, 8,
 			};
 	cout<<"\n********Input*************\n";
 	print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
