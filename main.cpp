@@ -5,7 +5,7 @@
 #include <limits.h>
 #include "helpers.h"
 using namespace std;
-#define PI 3.14
+
 void unmarked_sub_min_marked_add_min(int (&Cost)[4][4], int N, int M, vector<int> marked_columns, vector<int> marked_rows, int min){
 	bool col_marked_zero;
 	bool row_marked_zero;
