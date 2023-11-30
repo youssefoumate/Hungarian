@@ -5,7 +5,7 @@
 #include <limits.h>
 #include "helpers.h"
 using namespace std;
-
+#define PI 3.14
 void unmarked_sub_min_marked_add_min(int (&Cost)[4][4], int N, int M, vector<int> marked_columns, vector<int> marked_rows, int min){
 	bool col_marked_zero;
 	bool row_marked_zero;
@@ -26,7 +26,7 @@ void unmarked_sub_min_marked_add_min(int (&Cost)[4][4], int N, int M, vector<int
 			if ((!col_marked_zero) && (!row_marked_zero)){
 				Cost[i][j] -= min;
 			}
-			else if ((col_marked_zero) && (row_marked_zero)){
+			if ((col_marked_zero) && (row_marked_zero)){
 				Cost[i][j] += min;
 			}
 		}
@@ -88,7 +88,7 @@ tuple<int, int> find_non_marked_zero(int (&Cost)[4][4], int N, int M, vector<int
 	return tuple<int, int>(-1,-1);
 }
 
-void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, vector<tuple<int, int> > starred_zeros_coords, vector<int> marked_columns, vector<tuple<int, int> > primed_zeros_coords, vector<int> marked_rows, vector<tuple<int, int> > path){
+void solve(int (&Cost)[4][4], const int N, const int M, vector<tuple<int, int> > starred_zeros_coords, vector<int> marked_columns, vector<tuple<int, int> > primed_zeros_coords, vector<int> marked_rows, vector<tuple<int, int> > path){
 	bool done;
 	int min_uncoverd;
 	cout<<"********Step1*************\n";
@@ -105,7 +105,7 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 		}
 
 	}
-	if (print_and_check_valid_assignment(Cost, N, M, assignment_index, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path)) return;
+	print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
 
 	cout<<"********Step2*************\n";
 	//step2: minimum element in each column is subtracted from all the elements in that column
@@ -120,7 +120,7 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 		Cost[j][i] = Cost[j][i] - min_cost;
 		}
 	}
-	if (print_and_check_valid_assignment(Cost, N, M, assignment_index, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path)) return;
+	print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
 
 	cout<<"********Step3*************\n";
 	//step3: Assignment of arbitary zeros, they can't be in the same row or column.
@@ -133,27 +133,30 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 		}
 		}
 	}
-	if (print_and_check_valid_assignment(Cost, N, M, assignment_index, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path)) return;
+	print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
 	tuple<int, int> marked_zero_coords;
 	int marked_zero_i;
 	int marked_zero_j;
 	int counter = 0;
 	while(true){
-		cout<<"********Step4*************\n";
-		//Cover all columns containing a (starred) zero.
-		for (tuple<int, int> el : starred_zeros_coords) {
-			if (get<1>(el) != -1){
-				marked_columns.push_back(get<1>(el));
+		while(true){
+			cout<<"********Step4*************\n";
+			//Cover all columns containing a (starred) zero.
+			for (tuple<int, int> el : starred_zeros_coords) {
+				if (get<1>(el) != -1){
+					marked_columns.push_back(get<1>(el));
+				}
 			}
-		}
-		//Find a non-covered zero and prime it. (If all zeroes are covered, skip to step 5.)
-		cout << "start" << endl;
-		jump:
-		marked_zero_coords = find_non_marked_zero(Cost, N, M, marked_columns, marked_rows);
-		marked_zero_i = get<0>(marked_zero_coords);
-		marked_zero_j = get<1>(marked_zero_coords);
-		if ((marked_zero_i != -1) && (marked_zero_j != -1)){
-			cout << "if" << endl;
+			//Find a non-covered zero and prime it. (If all zeroes are covered, skip to step 5.)
+			cout << "start" << endl;
+			jump:
+			print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
+			marked_zero_coords = find_non_marked_zero(Cost, N, M, marked_columns, marked_rows);
+			marked_zero_i = get<0>(marked_zero_coords);
+			marked_zero_j = get<1>(marked_zero_coords);
+			if ((marked_zero_i == -1) && (marked_zero_j == -1)){
+				break;
+			}
 			primed_zeros_coords.push_back(tuple<int, int>(marked_zero_i, marked_zero_j));
 			//If the zero is on the same row as a starred zero, cover the corresponding row, 
 			// and uncover the column of the starred zero.
@@ -173,7 +176,6 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 				goto jump;
 			}
 			else{
-				cout << "else" << endl;
 				//the non-covered zero has no assigned zero on its row.
 				int nm_zero_i = marked_zero_i;
 				int nm_zero_j = marked_zero_j;
@@ -221,7 +223,7 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 				for (tuple<int, int> el: path){
 					for (int index = 0; index < primed_zeros_coords.size(); ++index){
 						primed_zero_coords = primed_zeros_coords[index];
-						if (get<0>(el) == get<0>(primed_zero_coords) && get<1>(el) == get<1>(primed_zero_coords)){
+						if ((get<0>(el) == get<0>(primed_zero_coords)) && (get<1>(el) == get<1>(primed_zero_coords))){
 							starred_zeros_coords.push_back(primed_zero_coords);
 						}
 					}
@@ -231,7 +233,7 @@ void solve(int (&Cost)[4][4], const int N, const int M, int *assignment_index, v
 				marked_rows.clear();
 				marked_columns.clear();	
 			}
-		}
+		}	
 		cout<<"********Step5*************\n";
 		//Find the lowest uncovered value.
 		min_uncoverd = find_min_uncoverd_value(Cost, N, M, marked_columns, marked_rows);
@@ -249,26 +251,32 @@ int main() {
 	int N = 4;
 	int M = 4;
 
-	int *assignment_index;
 	vector<tuple<int, int> > starred_zeros_coords;
 	vector<tuple<int, int> > primed_zeros_coords;
 	vector<int> marked_columns;
 	vector<int> marked_rows;
 	vector<tuple<int, int> > path;
-	assignment_index = new int[N];
 	//initialize with -1
-	for(int i = 0; i <N; i++)
-		assignment_index[i] = -1;
 	int Cost[4][4] = {
 			3, 7, 3, 11,
 			8, 5, 6, 5,
 			2, 4, 6, 3,
 			1, 10, 7, 8,
 			};
+	/*int Cost[4][4] = {
+			82,	83,	69,	92,
+			77,	37,	49,	92,
+			11,	69,	5,	86,
+			8,	9,	98,	23,
+			};*/
+	/*int Cost[3][3] = {
+			47,	73,	29,
+			83,	20,	48,
+			74,	88,	58,
+			};*/
 	cout<<"\n********Input*************\n";
 	print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
-	print_assignment(N, assignment_index);
-	solve(Cost, N, M, assignment_index, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
+	solve(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
 
 	return 0;
 }
