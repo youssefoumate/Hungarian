@@ -6,6 +6,38 @@
 #include "helpers.h"
 using namespace std;
 
+bool check_covered_zeros(int (&Cost)[4][4], int N, int M, vector<int> marked_columns, vector<int> marked_rows){
+	bool col_marked_zero;
+	bool row_marked_zero;
+	for(int i=0; i<N; i++){
+		for (int j = 0; j < M; j++){
+			col_marked_zero = false;
+			row_marked_zero = false;
+			if (Cost[i][j] == 0){
+				for (int el : marked_columns){
+					if (el == j){
+						col_marked_zero = true;
+					}
+				}
+				for (int el : marked_rows){
+					if (el == i){
+						row_marked_zero = true;
+					}
+				}
+				if ((!col_marked_zero) && (!row_marked_zero)){
+					return false;
+				}
+			}
+		}
+	}
+	return true;
+}
+vector<int> vector_unique(vector<int> vec){
+	sort(vec.begin(), vec.end());
+	auto it = unique(vec.begin(), vec.end());
+  	vec.resize(distance(vec.begin(), it));
+	return vec;
+}
 void unmarked_sub_min_marked_add_min(int (&Cost)[4][4], int N, int M, vector<int> marked_columns, vector<int> marked_rows, int min){
 	bool col_marked_zero;
 	bool row_marked_zero;
@@ -252,10 +284,26 @@ void solve(int (&Cost)[4][4], const int N, const int M, vector<tuple<int, int> >
 			unmarked_sub_min_marked_add_min(Cost, N, M, marked_columns, marked_rows, min_uncoverd);
 		}
 		print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
-		if ((marked_columns.size() + marked_rows.size()) == min(N,M)){
-			cout << "the minimum number of lines used to cover all the 0s is equal to min(number of people, number of assignments)" <<endl;
-			cout << "Done." << endl;
-			break;
+		marked_columns = vector_unique(marked_columns);
+		marked_rows = vector_unique(marked_rows);
+		cout << "number of lines: " << marked_columns.size() + marked_rows.size() << endl;
+		cout << "marked columns: ";
+		for (int mc : marked_columns){
+			cout << mc << ",";
+		}
+		cout << endl;
+		cout << "marked rows: ";
+		for (int mr : marked_rows){
+			cout << mr << ",";
+		}
+		cout << endl;
+		cout << "min (#people, #assignments): " << min(N,M) << endl;
+		if (check_covered_zeros(Cost, N, M, marked_columns, marked_rows)){
+			if ((marked_columns.size() + marked_rows.size()) == min(N,M)){
+				cout << "the minimum number of lines used to cover all the 0s is equal to min(number of people, number of assignments)" <<endl;
+				cout << "Done." << endl;
+				break;
+			}
 		}
 	}
 }
@@ -271,18 +319,18 @@ int main() {
 	vector<int> marked_rows;
 	vector<tuple<int, int> > path;
 	//initialize with -1
-	/*int Cost[4][4] = {
+	int Cost[4][4] = {
 			3, 7, 3, 11,
 			8, 5, 6, 5,
 			2, 4, 6, 3,
 			1, 10, 7, 8,
-			};*/
-	int Cost[4][4] = {
+			};
+	/*int Cost[4][4] = {
 			82,	83,	69,	92,
 			77,	37,	49,	92,
 			11,	69,	5,	86,
 			8,	9,	98,	23,
-			};
+			};*/
 	/*int Cost[3][3] = {
 			47,	73,	29,
 			83,	20,	48,
