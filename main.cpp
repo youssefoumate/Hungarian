@@ -141,29 +141,31 @@ void solve(int (&Cost)[4][4], const int N, const int M, vector<tuple<int, int> >
 	while(true){
 		while(true){
 			cout<<"********Step4*************\n";
-			//Cover all columns containing a (starred) zero.
+			cout << "Cover all columns containing a starred zero." << endl;
 			for (tuple<int, int> el : starred_zeros_coords) {
 				if (get<1>(el) != -1){
 					marked_columns.push_back(get<1>(el));
 				}
 			}
-			//Find a non-covered zero and prime it. (If all zeroes are covered, skip to step 5.)
-			cout << "start" << endl;
-			jump:
 			print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
+			jump:
+			cout << "Find a non-covered zero and prime it. (If all zeroes are covered, skip to step 5.)" << endl;
 			marked_zero_coords = find_non_marked_zero(Cost, N, M, marked_columns, marked_rows);
 			marked_zero_i = get<0>(marked_zero_coords);
 			marked_zero_j = get<1>(marked_zero_coords);
 			if ((marked_zero_i == -1) && (marked_zero_j == -1)){
+				cout << "All zeros are coverd...skip to step 5" << endl;
 				break;
 			}
 			primed_zeros_coords.push_back(tuple<int, int>(marked_zero_i, marked_zero_j));
-			//If the zero is on the same row as a starred zero, cover the corresponding row, 
-			// and uncover the column of the starred zero.
+			print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
+			cout << "If the zero is on the same row as a starred zero, cover the corresponding row," << endl;
+			cout << "and uncover the column of the starred zero." << endl;
 			bool starred_zero_exist = false;
 			for (tuple<int, int> el : starred_zeros_coords) {
 				if(marked_zero_i==get<0>(el)){
-					//remove marked column of the starred zero
+					cout << "starred zero exist." << endl;
+					cout << "uncover the column of the starred zero." << endl;
 					marked_columns.erase(remove(marked_columns.begin(), marked_columns.end(), get<1>(el)), marked_columns.end());
 					starred_zero_exist = true;
 					break;
@@ -171,20 +173,22 @@ void solve(int (&Cost)[4][4], const int N, const int M, vector<tuple<int, int> >
 			}
 			print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
 			if (starred_zero_exist){
+				cout << "cover the corresponding row." << endl;
 				marked_rows.push_back(marked_zero_i);
 				print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);	
 				goto jump;
 			}
 			else{
-				//the non-covered zero has no assigned zero on its row.
+				cout << "the non-covered zero has no assigned zero on its row." << endl;
 				int nm_zero_i = marked_zero_i;
 				int nm_zero_j = marked_zero_j;
 				tuple<int, int> non_covered_zero = tuple<int, int>(nm_zero_i,nm_zero_j);
 				path.push_back(non_covered_zero);
+				print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
 				int starred_zero_i;
 				int starred_zero_j;
 				while(true){
-					//Find a starred zero on the corresponding column
+					cout<<"Find a starred zero on the corresponding column" << endl;
 					bool starred_zero_exist = false;
 					for (tuple<int, int> starred_zero : starred_zeros_coords) {
 						if(nm_zero_j==get<1>(starred_zero)){
@@ -194,8 +198,9 @@ void solve(int (&Cost)[4][4], const int N, const int M, vector<tuple<int, int> >
 							path.push_back(tuple<int, int>(starred_zero_i, starred_zero_j));
 						}
 					}
+					print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
 					if (starred_zero_exist){
-						//Find a primed zero on the corresponding row (there should always be one).
+						cout << "Find a primed zero on the corresponding row (there should always be one)." << endl;
 						for (tuple<int, int> primed_zero : primed_zeros_coords) {
 							if(starred_zero_i==get<0>(primed_zero)){
 								starred_zero_exist = true;
@@ -203,13 +208,13 @@ void solve(int (&Cost)[4][4], const int N, const int M, vector<tuple<int, int> >
 								nm_zero_j = get<1>(primed_zero);
 							}
 						}
+						print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
 					}
 					else{
 						break;
 					}
 				}
-				print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
-				//For all zeros encountered during the path, star primed zeros and unstar starred zeros.
+				cout << "For all zeros encountered during the path, star primed zeros and unstar starred zeros." << endl;
 				tuple<int, int> starred_zero_coords;
 				tuple<int, int> primed_zero_coords;
 				for (tuple<int, int> el: path){
@@ -229,18 +234,27 @@ void solve(int (&Cost)[4][4], const int N, const int M, vector<tuple<int, int> >
 					}
 				}
 				print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
+				cout << "Unprime all primed zeroes and uncover all lines." << endl;
 				primed_zeros_coords.clear();
 				marked_rows.clear();
-				marked_columns.clear();	
+				marked_columns.clear();
+				path.clear();
+				print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
 			}
 		}	
 		cout<<"********Step5*************\n";
-		//Find the lowest uncovered value.
 		min_uncoverd = find_min_uncoverd_value(Cost, N, M, marked_columns, marked_rows);
-		//Subtract this from every unmarked element and add it to every element covered by two lines.
-		unmarked_sub_min_marked_add_min(Cost, N, M, marked_columns, marked_rows, min_uncoverd);
+		if (min_uncoverd == INT_MAX){
+			cout << "No uncoverd minimum value was found" << endl;
+		}else{
+			cout << "Find the lowest uncovered value: "<< min_uncoverd << endl;
+			cout << "Subtract " << min_uncoverd << " from every unmarked element and add it to every element covered by two lines." <<endl;
+			unmarked_sub_min_marked_add_min(Cost, N, M, marked_columns, marked_rows, min_uncoverd);
+		}
 		print_matrix(Cost, N, M, starred_zeros_coords, marked_columns, primed_zeros_coords, marked_rows, path);
 		if ((marked_columns.size() + marked_rows.size()) == min(N,M)){
+			cout << "the minimum number of lines used to cover all the 0s is equal to min(number of people, number of assignments)" <<endl;
+			cout << "Done." << endl;
 			break;
 		}
 	}
@@ -257,18 +271,18 @@ int main() {
 	vector<int> marked_rows;
 	vector<tuple<int, int> > path;
 	//initialize with -1
-	int Cost[4][4] = {
+	/*int Cost[4][4] = {
 			3, 7, 3, 11,
 			8, 5, 6, 5,
 			2, 4, 6, 3,
 			1, 10, 7, 8,
-			};
-	/*int Cost[4][4] = {
+			};*/
+	int Cost[4][4] = {
 			82,	83,	69,	92,
 			77,	37,	49,	92,
 			11,	69,	5,	86,
 			8,	9,	98,	23,
-			};*/
+			};
 	/*int Cost[3][3] = {
 			47,	73,	29,
 			83,	20,	48,
